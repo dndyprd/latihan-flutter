@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:latihan_flutter/models/profile.dart';
+import 'package:latihan_flutter/screens/edit_profile.dart';
 
 class DetailProfile extends StatefulWidget {
-  final String? passedData;
+  const DetailProfile({super.key, required this.profile});
 
-  const DetailProfile({super.key, this.passedData});
+  final Profile profile;
 
   @override
   State<DetailProfile> createState() => _DetailProfileState();
@@ -48,27 +50,31 @@ class _DetailProfileState extends State<DetailProfile> {
                     child: CircleAvatar(
                       radius: 80,
                       backgroundImage: NetworkImage(
-                        'https://dndyprd.vercel.app/img/profile.jpg',
+                        'https://ui-avatars.com/api/?name=${widget.profile.name}&background=${_appBarColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}&color=fff&size=250',
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            if (widget.passedData != null && widget.passedData!.isNotEmpty) ...[
-              SizedBox(height: 8),
-              Text(
-                'Nama : ${widget.passedData}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
             Text(
-              'NIM : 2415354064',
+              widget.profile.name,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              widget.profile.profesi64,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
+            SizedBox(height: 4),
             Text(
-              'Kelas : 4D TRPL',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+              widget.profile.nomorTelpon64,
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ),
+            SizedBox(height: 4),
+            Text(
+              widget.profile.domisili64,
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
             SizedBox(height: 24),
             Padding(
@@ -76,7 +82,7 @@ class _DetailProfileState extends State<DetailProfile> {
               child: Column(
                 children: [
                   Text(
-                    'I\'m a programmer with a passion for front-end development and a graphic designer. My interest in technology and graphic design stems from my curiosity. My love of art and aesthetics drives me to create solutions that are not only effective but also visually appealing, combining functionality with compelling design. Here, I combine technical skills and creativity to develop impactful digital experiences that deliver real value to users.',
+                    'Halo! Perkenalkan, nama saya ${widget.profile.name}. Saya adalah seorang ${widget.profile.profesi64} yang penuh semangat dan saat ini saya menetap / berdomisili di ${widget.profile.domisili64}. Jika Anda memiliki proyek atau kolaborasi, silakan hubungi saya di ${widget.profile.nomorTelpon64}. Mari menciptakan hal-hal hebat bersama!',
                     textAlign: TextAlign.justify,
                     style: TextStyle(
                       fontSize: 14,
@@ -103,12 +109,51 @@ class _DetailProfileState extends State<DetailProfile> {
                   ),
                   child: Text('Change Color'),
                 ),
-                SizedBox(width: 16),
+                SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: _appBarColor,
+                    textStyle: TextStyle(fontSize: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                   child: Text('Go Back'),
+                ),
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () async {
+                    final Profile? updatedProfile = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditProfile(profile: widget.profile),
+                      ),
+                    );
+
+                    if (updatedProfile != null) {
+                      setState(() {
+                        widget.profile.name = updatedProfile.name;
+                        widget.profile.profesi64 = updatedProfile.profesi64;
+                        widget.profile.domisili64 = updatedProfile.domisili64;
+                        widget.profile.nomorTelpon64 =
+                            updatedProfile.nomorTelpon64;
+                      });
+
+                      Navigator.pop(context, widget.profile);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: _appBarColor,
+                    textStyle: TextStyle(fontSize: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text('Edit'),
                 ),
               ],
             ),
