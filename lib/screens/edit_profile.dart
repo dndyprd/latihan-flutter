@@ -48,6 +48,7 @@ class _EditProfileState extends State<EditProfile> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -71,10 +72,10 @@ class _EditProfileState extends State<EditProfile> {
                   if (_formKey.currentState!.validate()) {
                     final updatedProfile = Profile(
                       id: widget.profile.id,
-                      name: widget.profile.name,
-                      profesi64: widget.profile.profesi64,
-                      nomorTelpon64: widget.profile.nomorTelpon64,
-                      domisili64: widget.profile.domisili64,
+                      name: _nameController.text,
+                      profesi64: _profesi64Controller.text,
+                      nomorTelpon64: _nomorTelpon64Controller.text,
+                      domisili64: _domisili64Controller.text,
                     );
 
                     Navigator.pop(context, updatedProfile);
