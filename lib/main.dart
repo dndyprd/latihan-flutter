@@ -1,10 +1,17 @@
 import 'package:latihan_flutter/screens/list_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:latihan_flutter/providers/profile_provider.dart';
 import 'package:latihan_flutter/screens/detail_profile.dart';
 import 'package:latihan_flutter/models/profile.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ProfileProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

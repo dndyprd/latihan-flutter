@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:latihan_flutter/models/profile.dart';
 import 'package:latihan_flutter/screens/edit_profile.dart';
+import 'package:latihan_flutter/providers/profile_provider.dart';
+import 'package:provider/provider.dart';
 
 class DetailProfile extends StatefulWidget {
   const DetailProfile({super.key, required this.profile});
@@ -22,6 +24,11 @@ class _DetailProfileState extends State<DetailProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<ProfileProvider>();
+
+    final profile = provider.profiles.firstWhere(
+      (p) => p.id == widget.profile.id,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text('Detail Profile'),
@@ -57,41 +64,58 @@ class _DetailProfileState extends State<DetailProfile> {
                 ],
               ),
             ),
-            Text(
-              widget.profile.name,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              widget.profile.profesi64,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
-            SizedBox(height: 4),
-            Text(
-              widget.profile.nomorTelpon64,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 4),
-            Text(
-              widget.profile.domisili64,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: Column(
-                children: [
-                  Text(
-                    'Halo! Perkenalkan, nama saya ${widget.profile.name}. Saya adalah seorang ${widget.profile.profesi64} yang penuh semangat dan saat ini saya menetap / berdomisili di ${widget.profile.domisili64}. Jika Anda memiliki proyek atau kolaborasi, silakan hubungi saya di ${widget.profile.nomorTelpon64}. Mari menciptakan hal-hal hebat bersama!',
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: Colors.black54,
+            Consumer<Profile>(
+              builder: (context, profile, child) {
+                final profile = provider.profiles.firstWhere(
+                  (p) => p.id == widget.profile.id,
+                );
+                return Column(
+                  children: [
+                    Text(
+                      profile.name,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(height: 8),
+                    Text(
+                      profile.profesi64,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      profile.nomorTelpon64,
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      profile.domisili64,
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
+                    SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Halo! Perkenalkan, nama saya ${profile.name}. Saya adalah seorang ${profile.profesi64} yang penuh semangat dan saat ini saya menetap / berdomisili di ${profile.domisili64}. Jika Anda memiliki proyek atau kolaborasi, silakan hubungi saya di ${profile.nomorTelpon64}. Mari menciptakan hal-hal hebat bersama!',
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.5,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
             SizedBox(height: 32),
             Row(
@@ -135,15 +159,13 @@ class _DetailProfileState extends State<DetailProfile> {
                     );
 
                     if (updatedProfile != null) {
-                      setState(() {
-                        widget.profile.name = updatedProfile.name;
-                        widget.profile.profesi64 = updatedProfile.profesi64;
-                        widget.profile.domisili64 = updatedProfile.domisili64;
-                        widget.profile.nomorTelpon64 =
-                            updatedProfile.nomorTelpon64;
-                      });
-
-                      Navigator.pop(context, widget.profile);
+                      final provider = context.read<ProfileProvider>();
+                      final index = provider.profiles.indexWhere(
+                        (p) => p.id == updatedProfile.id,
+                      );
+                      if (index != -1) {
+                        provider.updateProfile(index, updatedProfile);
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -153,7 +175,7 @@ class _DetailProfileState extends State<DetailProfile> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('Edit'),
+                  child: Text('Edit Profile'),
                 ),
               ],
             ),
